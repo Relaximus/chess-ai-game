@@ -9,11 +9,34 @@
           crossorigin="anonymous">
 
     <style>
+        #game-field {
+            width: 100%;
+            display: flex;
+            column-gap: 20px;
+        }
+
+        #ai-chat {
+            background-color: azure;
+            width: 400px;
+            max-height: 600px;
+            overflow-y: scroll;
+        }
+
+        .chat-message {
+            margin-top: 5px;
+            border: 1px dashed grey;
+
+            mark {
+                font-weight: bold;
+            }
+        }
+
         #myBoard {
             min-width: 400px;
             width: 40%;
             margin-left: 30%;
         }
+
         .player-title {
             margin-left: 30%;
             display: flex;
@@ -21,7 +44,8 @@
             width: 40%;
             justify-content: center;
         }
-        #white-player{
+
+        #white-player {
             margin-right: 20px;
         }
     </style>
@@ -31,14 +55,19 @@
 <div class="player-title">
     <div id="black-player">AI Engine</div>
 </div>
-<div id="myBoard"></div>
+<div id="game-field">
+    <div id="myBoard"></div>
+    <div id="ai-chat">
+        <h3>AI responses:</h3>
+        <div id="messages"></div>
+    </div>
+</div>
 <div class="player-title">
-    <div id="white-player">Manual</div> <button id="autoPilot">Switch autopilot</button>
+    <div id="white-player">Manual</div>
+    <button id="autoPilot">Switch autopilot</button>
 </div>
 <label>Status:</label>
 <div id="status"></div>
-<!--<label>FEN:</label>-->
-<!--<div id="fen"></div>-->
 <label>PGN:</label>
 <div id="pgn"></div>
 
@@ -59,11 +88,12 @@
     var game = new Chess()
     var $status = $('#status')
     var $pgn = $('#pgn')
+    var $chat = $('#messages')
     var randomAutopilot = false
     $('#autoPilot').on('click', () => {
         randomAutopilot = !randomAutopilot
         $('#white-player').text(randomAutopilot ? 'Random Autopilot' : 'Manual');
-        if(randomAutopilot) randomMove()
+        if (randomAutopilot) randomMove()
     })
 
     function onDragStart(source, piece, position, orientation) {
@@ -93,7 +123,7 @@
         board.position(game.fen())
         updateStatus()
 
-        if(scheduleNextMove) {
+        if (scheduleNextMove) {
             window.setTimeout(makeMove, 250)
         }
     }
@@ -119,6 +149,14 @@
         }
 
         loadAiMove(fen, possibleMoves, game.in_check() ? moveColor : "")
+            .then(aiMove => {
+                $chat.prepend(`<div class="chat-message">${aiMove}</div>`)
+                return aiMove;
+            })
+            .then(aiMove => {
+                const nr = /<mark>(.*?)<\/mark>/g.exec(aiMove);
+                return nr[1];
+            })
             .then(aiMove => {
                 if (aiMove.length > 0 && possibleMoves.includes(aiMove.trim())) {
                     console.log("AI Engine: %o", aiMove)
