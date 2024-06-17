@@ -18,6 +18,6 @@ jobs:
       - name: build and push docker image to registry
         uses: docker/build-push-action@v5
         with:
-          context: model/
+          context: /
           push: true
-          tags: relaximus/mistral-ollama:latest
+          tags: relaximus/chess-engine:latest
