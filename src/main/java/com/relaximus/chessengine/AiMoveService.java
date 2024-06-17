@@ -51,11 +51,6 @@ public class AiMoveService {
 
         ChatResponse response = chatClient.call(new Prompt(List.of(userMessage, systemMessage)));
 
-        System.out.println(STR."FEN: \{fen}");
-        System.out.println(STR."MOVES: \{moves}");
-        System.out.println(STR."CHECK: \{check}");
-        System.out.println(STR."Response: \{response}");
-
         return response.getResult().getOutput().getContent();
     }
 }
