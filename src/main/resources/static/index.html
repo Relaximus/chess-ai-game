@@ -90,6 +90,7 @@
     var $pgn = $('#pgn')
     var $chat = $('#messages')
     var randomAutopilot = false
+    var aiMessagesHistory = []
     $('#autoPilot').on('click', () => {
         randomAutopilot = !randomAutopilot
         $('#white-player').text(randomAutopilot ? 'Random Autopilot' : 'Manual');
@@ -105,8 +106,26 @@
     }
 
     async function loadAiMove(fen, possibleMoves, check) {
-        const response = await fetch('/move?fen="' + fen + '"&moves="' + possibleMoves + '"&check=' + check)
-        return await response.text()
+        let body = {
+            fen,
+            moves: possibleMoves,
+            check
+        };
+        if (aiMessagesHistory.length > 0) {
+            body['history'] = aiMessagesHistory
+        }
+        const response = await fetch('http://localhost:8090/move', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)})
+
+        const json = await response.json();
+        aiMessagesHistory.push(json["question"])
+        aiMessagesHistory.push(json["answer"])
+
+        return json["answer"]
     }
 
     function randomMove(scheduleNextMove = true) {
