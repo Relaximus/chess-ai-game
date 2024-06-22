@@ -16,10 +16,7 @@ import reactor.util.function.Tuples;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Gatherers;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toCollection;
 import static org.springframework.util.StringUtils.hasLength;
 
 @Service
@@ -41,13 +38,11 @@ public class AiMoveService {
                 Place the move option inside of tag <mark><mark/>.
                 If you don't know the answer just return an empty <mark></mark>
                 """);
-        List<Message> historyOfChat = history.stream()
-                .gather(Gatherers.windowFixed(2))
-                .flatMap(strings -> Stream.of(
-                        new UserMessage(strings.get(0)),
-                        new AssistantMessage(strings.get(1))))
-                .collect(toCollection(() -> new ArrayList<>(List.of(systemMessage))));
-
+        final ArrayList<Message> messages = new ArrayList<>(List.of(systemMessage));
+        for(int i=0; i < history.size(); i+=2) {
+            messages.add(new UserMessage(history.get(i)));
+            messages.add(new AssistantMessage(history.get(i+1)));
+        }
         var lastUserMessage = new PromptTemplate("""
                 So her is the FEN of the chess game.
                              
@@ -63,8 +58,8 @@ public class AiMoveService {
                              
                 Give me the best move with this input""").createMessage(Map.of("fen", fen, "moves", moves, "check", hasLength(check) ? check + " side has a check situation." : "There is no check situation at the moment"));
 
-        historyOfChat.add(lastUserMessage);
-        ChatResponse response = chatClient.call(new Prompt(historyOfChat));
+        messages.add(lastUserMessage);
+        ChatResponse response = chatClient.call(new Prompt(messages));
 
         return Tuples.of(lastUserMessage.getContent(), response.getResult().getOutput().getContent());
     }
