@@ -68,6 +68,7 @@
 					<buildArgs combine.children="append">
 						<arg>--trace-object-instantiation=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
 						<arg>--initialize-at-build-time=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
+						<arg>--enable-preview</arg>
 						<buildArg>--enable-preview</buildArg>
 					</buildArgs>
 					<imageName>check-engine</imageName>
