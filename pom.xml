@@ -68,6 +68,7 @@
 					<buildArgs>
 						<arg>--trace-object-instantiation=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
 						<arg>--initialize-at-build-time=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
+						<arg>--enable-preview</arg>
 					</buildArgs>
 					<imageName>check-engine</imageName>
 					<mainClass>com.relaximus.chessengine.ChessEngineApplication</mainClass>
