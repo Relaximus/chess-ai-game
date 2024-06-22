@@ -48,6 +48,14 @@
         #white-player {
             margin-right: 20px;
         }
+        .hidden {
+            display: none;
+        }
+        #loading {
+            img {
+                height: 150px;
+            }
+        }
     </style>
 
 </head>
@@ -59,6 +67,9 @@
     <div id="myBoard"></div>
     <div id="ai-chat">
         <h3>AI responses:</h3>
+        <div id="loading" class="hidden">
+            <img src="thinking.webp"/>
+        </div>
         <div id="messages"></div>
     </div>
 </div>
@@ -87,6 +98,7 @@
     var board = null
     var game = new Chess()
     var $status = $('#status')
+    var $loading = $('#loading')
     var $pgn = $('#pgn')
     var $chat = $('#messages')
     var randomAutopilot = false
@@ -167,6 +179,7 @@
             return
         }
 
+        $loading.removeClass('hidden')
         loadAiMove(fen, possibleMoves, game.in_check() ? moveColor : "")
             .then(aiMove => {
                 $chat.prepend(`<div class="chat-message">${aiMove}</div>`)
@@ -186,6 +199,7 @@
                     randomMove(false)
                 }
             }).finally(() => {
+            $loading.addClass('hidden')
             if (randomAutopilot) window.setTimeout(randomMove, 250)
         })
     }
