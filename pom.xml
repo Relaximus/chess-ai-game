@@ -65,10 +65,10 @@
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
 				<configuration>
-					<buildArgs>
+					<buildArgs combine.children="append">
 						<arg>--trace-object-instantiation=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
 						<arg>--initialize-at-build-time=org.springframework.boot.loader.nio.file.NestedFileSystemProvider</arg>
-						<arg>--enable-preview</arg>
+						<buildArg>--enable-preview</buildArg>
 					</buildArgs>
 					<imageName>check-engine</imageName>
 					<mainClass>com.relaximus.chessengine.ChessEngineApplication</mainClass>
