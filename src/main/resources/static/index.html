@@ -126,7 +126,7 @@
         if (aiMessagesHistory.length > 0) {
             body['history'] = aiMessagesHistory
         }
-        const response = await fetch('http://localhost:8090/move', {
+        const response = await fetch('/move', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
